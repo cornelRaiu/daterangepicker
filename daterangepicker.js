@@ -372,6 +372,7 @@
             this.container.find('.ranges').prepend(list);
         }
 
+
         if (typeof cb === 'function') {
             this.callback = cb;
         }
@@ -433,14 +434,17 @@
             .on('mouseenter.daterangepicker', 'td.available', $.proxy(this.hoverDate, this))
             .on('change.daterangepicker', 'select.yearselect', $.proxy(this.monthOrYearChanged, this))
             .on('change.daterangepicker', 'select.monthselect', $.proxy(this.monthOrYearChanged, this))
-            .on('change.daterangepicker', 'select.hourselect,select.minuteselect,select.secondselect,select.ampmselect', $.proxy(this.timeChanged, this))
+            .on('change.daterangepicker', 'select.hourselect,select.minuteselect,select.secondselect,select.ampmselect', $.proxy(this.timeChanged, this));
 
         this.container.find('.ranges')
-            .on('click.daterangepicker', 'li', $.proxy(this.clickRange, this))
+            .on('click.daterangepicker', 'li', $.proxy(this.clickRange, this));
 
         this.container.find('.drp-buttons')
             .on('click.daterangepicker', 'button.applyBtn', $.proxy(this.clickApply, this))
-            .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this))
+            .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this));
+
+        this.container.on('click.daterangepicker', '.close-button', $.proxy(this.hide, this));
+        this.container.on('click.daterangepicker', '.reset-button', $.proxy(this.clickCancel, this));
 
         if (this.element.is('input') || this.element.is('button')) {
             this.element.on({
@@ -766,15 +770,14 @@
             }
 
             html += '</tr>';
-            
+
             if ( this.displayWeekDays ) {
                 html += '<tr>';
-    
+
                 // add week number label
                 if (this.showWeekNumbers || this.showISOWeekNumbers)
                     html += '<th class="week">' + this.locale.weekLabel + '</th>';
 
-            
                 $.each(this.locale.daysOfWeek, function(index, dayOfWeek) {
                     html += '<th>' + dayOfWeek + '</th>';
                 });
