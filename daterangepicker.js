@@ -59,6 +59,7 @@
         this.ranges = {};
         this.displayWeekDays = true;
         this.weekDaysWrapper = '';
+        this.hideNextPrev = false;
 
         this.opens = 'right';
         if (this.element.hasClass('pull-right'))
@@ -287,6 +288,9 @@
 
         if (typeof options.displayWeekDays === 'boolean')
             this.displayWeekDays = options.displayWeekDays;
+
+        if (typeof options.hideNextPrev === 'boolean')
+            this.hideNextPrev = options.hideNextPrev;
 
         if (typeof options.weekDaysWrapper === 'string')
             this.weekDaysWrapper = options.weekDaysWrapper;
@@ -742,7 +746,7 @@
             if (this.showWeekNumbers || this.showISOWeekNumbers)
                 html += '<th></th>';
 
-            if ((!minDate || minDate.isBefore(calendar.firstDay)) && (!this.linkedCalendars || side == 'left')) {
+            if ((!minDate || minDate.isBefore(calendar.firstDay)) && (!this.linkedCalendars || side == 'left') && ! this.hideNextPrev) {
                 html += '<th class="prev available"><span></span></th>';
             } else {
                 html += '<th></th>';
@@ -784,7 +788,7 @@
             }
 
             html += '<th colspan="5" class="month">' + dateHtml + '</th>';
-            if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!this.linkedCalendars || side == 'right' || this.singleDatePicker || this.singleMonthView)) {
+            if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!this.linkedCalendars || side == 'right' || this.singleDatePicker || this.singleMonthView) && ! this.hideNextPrev) {
                 html += '<th class="next available"><span></span></th>';
             } else {
                 html += '<th></th>';
