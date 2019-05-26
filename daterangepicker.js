@@ -58,6 +58,7 @@
         this.additionalClasses = '';
         this.ranges = {};
         this.displayWeekDays = true;
+        this.weekDaysWrapper = '';
 
         this.opens = 'right';
         if (this.element.hasClass('pull-right'))
@@ -286,6 +287,9 @@
 
         if (typeof options.displayWeekDays === 'boolean')
             this.displayWeekDays = options.displayWeekDays;
+
+        if (typeof options.weekDaysWrapper === 'string')
+            this.weekDaysWrapper = options.weekDaysWrapper;
 
         // update day names order to firstDay
         if (this.locale.firstDay != 0) {
@@ -553,6 +557,23 @@
             }
             if (this.endDate)
                 this.container.find('.drp-selected').html(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
+
+            if ( ! this.displayWeekDays && this.weekDaysWrapper !== '') {
+                var html = '<table class="table-condensed">';
+                html += '<thead>';
+                html += '<tr>';
+                if (this.showWeekNumbers || this.showISOWeekNumbers)
+                    html += '<th class="week">' + this.locale.weekLabel + '</th>';
+                $.each(this.locale.daysOfWeek, function(index, dayOfWeek) {
+                    html += '<th>' + dayOfWeek + '</th>';
+                });
+                html += '</tr>';
+                html += '</thead>';
+                html += '</table>';
+
+                this.container.find(this.weekDaysWrapper).html(html);
+            }
+
             this.updateMonthsInView();
             this.updateCalendars();
             this.updateFormInputs();
