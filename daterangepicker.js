@@ -54,6 +54,7 @@
         this.linkedCalendars = true;
         this.autoUpdateInput = true;
         this.alwaysShowCalendars = false;
+        this.additionalClasses = '';
         this.ranges = {};
 
         this.opens = 'right';
@@ -287,6 +288,9 @@
             }
         }
 
+        if (typeof options.additionalClasses === 'string')
+            this.additionalClasses = options.additionalClasses;
+
         var start, end, range;
 
         //if no start/end dates set, check if an input element contains initial values
@@ -396,6 +400,7 @@
         }
 
         this.container.addClass('opens' + this.opens);
+        this.container.addClass(this.additionalClasses);
 
         //apply CSS classes and labels to buttons
         this.container.find('.applyBtn, .cancelBtn').addClass(this.buttonClasses);
