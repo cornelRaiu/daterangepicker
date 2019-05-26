@@ -1384,6 +1384,22 @@
             }
         },
 
+        clearEndDate: function(e) {
+            this.endDate = null;
+            this.updateView();
+
+            e.stopPropagation();
+        },
+
+        clearDates: function(e) {
+            this.startDate = this.oldStartDate;
+            this.endDate = this.oldEndDate;
+
+            this.element.trigger('clear.daterangepicker', this);
+
+            this.updateView();
+        },
+
         clickApply: function(e) {
             this.hide();
             this.element.trigger('apply.daterangepicker', this);
