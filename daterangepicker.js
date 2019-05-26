@@ -1,10 +1,10 @@
 /**
-* @version: 3.0.5
-* @author: Dan Grossman http://www.dangrossman.info/
-* @copyright: Copyright (c) 2012-2019 Dan Grossman. All rights reserved.
-* @license: Licensed under the MIT license. See http://www.opensource.org/licenses/mit-license.php
-* @website: http://www.daterangepicker.com/
-*/
+ * @version: 3.0.5
+ * @author: Dan Grossman http://www.dangrossman.info/
+ * @copyright: Copyright (c) 2012-2019 Dan Grossman. All rights reserved.
+ * @license: Licensed under the MIT license. See http://www.opensource.org/licenses/mit-license.php
+ * @website: http://www.daterangepicker.com/
+ */
 // Following the UMD template https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -42,6 +42,7 @@
         this.autoApply = false;
         this.singleDatePicker = false;
         this.showDropdowns = false;
+        this.singleMonthView = false;
         this.minYear = moment().subtract(100, 'year').format('YYYY');
         this.maxYear = moment().add(100, 'year').format('YYYY');
         this.showWeekNumbers = false;
@@ -100,22 +101,22 @@
         //html template for the picker UI
         if (typeof options.template !== 'string' && !(options.template instanceof $))
             options.template =
-            '<div class="daterangepicker">' +
+                '<div class="daterangepicker">' +
                 '<div class="ranges"></div>' +
                 '<div class="drp-calendar left">' +
-                    '<div class="calendar-table"></div>' +
-                    '<div class="calendar-time"></div>' +
+                '<div class="calendar-table"></div>' +
+                '<div class="calendar-time"></div>' +
                 '</div>' +
                 '<div class="drp-calendar right">' +
-                    '<div class="calendar-table"></div>' +
-                    '<div class="calendar-time"></div>' +
+                '<div class="calendar-table"></div>' +
+                '<div class="calendar-time"></div>' +
                 '</div>' +
                 '<div class="drp-buttons">' +
-                    '<span class="drp-selected"></span>' +
-                    '<button class="cancelBtn" type="button"></button>' +
-                    '<button class="applyBtn" disabled="disabled" type="button"></button> ' +
+                '<span class="drp-selected"></span>' +
+                '<button class="cancelBtn" type="button"></button>' +
+                '<button class="applyBtn" disabled="disabled" type="button"></button> ' +
                 '</div>' +
-            '</div>';
+                '</div>';
 
         this.parentEl = (options.parentEl && $(options.parentEl).length) ? $(options.parentEl) : $(this.parentEl);
         this.container = $(options.template).appendTo(this.parentEl);
@@ -139,19 +140,19 @@
                 this.locale.daysOfWeek = options.locale.daysOfWeek.slice();
 
             if (typeof options.locale.monthNames === 'object')
-              this.locale.monthNames = options.locale.monthNames.slice();
+                this.locale.monthNames = options.locale.monthNames.slice();
 
             if (typeof options.locale.firstDay === 'number')
-              this.locale.firstDay = options.locale.firstDay;
+                this.locale.firstDay = options.locale.firstDay;
 
             if (typeof options.locale.applyLabel === 'string')
-              this.locale.applyLabel = options.locale.applyLabel;
+                this.locale.applyLabel = options.locale.applyLabel;
 
             if (typeof options.locale.cancelLabel === 'string')
-              this.locale.cancelLabel = options.locale.cancelLabel;
+                this.locale.cancelLabel = options.locale.cancelLabel;
 
             if (typeof options.locale.weekLabel === 'string')
-              this.locale.weekLabel = options.locale.weekLabel;
+                this.locale.weekLabel = options.locale.weekLabel;
 
             if (typeof options.locale.customRangeLabel === 'string'){
                 //Support unicode chars in the custom range name.
@@ -249,6 +250,9 @@
                 this.endDate = this.startDate.clone();
         }
 
+        if (typeof options.singleMonthView === 'boolean' && !this.singleDatePicker)
+            this.singleMonthView = options.singleMonthView;
+
         if (typeof options.timePicker === 'boolean')
             this.timePicker = options.timePicker;
 
@@ -342,7 +346,7 @@
                 // If the end of the range is before the minimum or the start of the range is
                 // after the maximum, don't display this range option at all.
                 if ((this.minDate && end.isBefore(this.minDate, this.timepicker ? 'minute' : 'day'))
-                  || (maxDate && start.isAfter(maxDate, this.timepicker ? 'minute' : 'day')))
+                    || (maxDate && start.isAfter(maxDate, this.timepicker ? 'minute' : 'day')))
                     continue;
 
                 //Support unicode chars in the range names.
@@ -384,6 +388,9 @@
 
         if (typeof options.ranges === 'object')
             this.container.addClass('show-ranges');
+
+        if (this.singleMonthView)
+            this.container.find('.drp-calendar.right').hide();
 
         if (this.singleDatePicker) {
             this.container.addClass('single');
@@ -551,7 +558,7 @@
                     (this.startDate.format('YYYY-MM') == this.leftCalendar.month.format('YYYY-MM') || this.startDate.format('YYYY-MM') == this.rightCalendar.month.format('YYYY-MM'))
                     &&
                     (this.endDate.format('YYYY-MM') == this.leftCalendar.month.format('YYYY-MM') || this.endDate.format('YYYY-MM') == this.rightCalendar.month.format('YYYY-MM'))
-                    ) {
+                ) {
                     return;
                 }
 
@@ -569,8 +576,8 @@
                 }
             }
             if (this.maxDate && this.linkedCalendars && !this.singleDatePicker && this.rightCalendar.month > this.maxDate) {
-              this.rightCalendar.month = this.maxDate.clone().date(2);
-              this.leftCalendar.month = this.maxDate.clone().date(2).subtract(1, 'month');
+                this.rightCalendar.month = this.maxDate.clone().date(2);
+                this.leftCalendar.month = this.maxDate.clone().date(2).subtract(1, 'month');
             }
         },
 
@@ -612,7 +619,9 @@
             }
 
             this.renderCalendar('left');
-            this.renderCalendar('right');
+            if (!this.singleMonthView) {
+                this.renderCalendar('right');
+            }
 
             //highlight any predefined range matching the current start and end dates
             this.container.find('.ranges li').removeClass('active');
@@ -745,7 +754,7 @@
             }
 
             html += '<th colspan="5" class="month">' + dateHtml + '</th>';
-            if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!this.linkedCalendars || side == 'right' || this.singleDatePicker)) {
+            if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!this.linkedCalendars || side == 'right' || this.singleDatePicker || this.singleMonthView)) {
                 html += '<th class="next available"><span></span></th>';
             } else {
                 html += '<th></th>';
@@ -1018,7 +1027,7 @@
 
         updateFormInputs: function() {
 
-            if (this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate)))) {
+            if (this.singleDatePicker || this.singleMonthView || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate)))) {
                 this.container.find('button.applyBtn').removeAttr('disabled');
             } else {
                 this.container.find('button.applyBtn').attr('disabled', 'disabled');
@@ -1045,9 +1054,9 @@
 
             // Force the container to it's actual width
             this.container.css({
-              top: 0,
-              left: 0,
-              right: 'auto'
+                top: 0,
+                left: 0,
+                right: 'auto'
             });
             var containerWidth = this.container.outerWidth();
 
@@ -1070,7 +1079,7 @@
                 }
             } else if (this.opens == 'center') {
                 var containerLeft = this.element.offset().left - parentOffset.left + this.element.outerWidth() / 2
-                                        - containerWidth / 2;
+                    - containerWidth / 2;
                 if (containerLeft < 0) {
                     this.container.css({
                         top: containerTop,
@@ -1116,13 +1125,13 @@
 
             // Bind global datepicker mousedown for hiding and
             $(document)
-              .on('mousedown.daterangepicker', this._outsideClickProxy)
-              // also support mobile devices
-              .on('touchend.daterangepicker', this._outsideClickProxy)
-              // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
-              .on('click.daterangepicker', '[data-toggle=dropdown]', this._outsideClickProxy)
-              // and also close when focus changes to outside the picker (eg. tabbing between controls)
-              .on('focusin.daterangepicker', this._outsideClickProxy);
+                .on('mousedown.daterangepicker', this._outsideClickProxy)
+                // also support mobile devices
+                .on('touchend.daterangepicker', this._outsideClickProxy)
+                // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
+                .on('click.daterangepicker', '[data-toggle=dropdown]', this._outsideClickProxy)
+                // and also close when focus changes to outside the picker (eg. tabbing between controls)
+                .on('focusin.daterangepicker', this._outsideClickProxy);
 
             // Reposition the picker if the window is resized while it's open
             $(window).on('resize.daterangepicker', $.proxy(function(e) { this.move(e); }, this));
@@ -1179,7 +1188,7 @@
                 target.closest(this.element).length ||
                 target.closest(this.container).length ||
                 target.closest('.calendar-table').length
-                ) return;
+            ) return;
             this.hide();
             this.element.trigger('outsideClick.daterangepicker', this);
         },
@@ -1197,11 +1206,15 @@
 
         clickRange: function(e) {
             var label = e.target.getAttribute('data-range-key');
+            var dates;
             this.chosenLabel = label;
             if (label == this.locale.customRangeLabel) {
                 this.showCalendars();
+            } else if (this.singleMonthView) {
+                dates = this.ranges[label];
+                this.startDate.val(dates[0] + this.locale.separator + dates[1]);
             } else {
-                var dates = this.ranges[label];
+                dates = this.ranges[label];
                 this.startDate = dates[0];
                 this.endDate = dates[1];
 
@@ -1296,7 +1309,6 @@
             // * if single date picker mode, and time picker isn't enabled, apply the selection immediately
             // * if one of the inputs above the calendars was focused, cancel that manual input
             //
-
             if (this.endDate || date.isBefore(this.startDate, 'day')) { //picking start
                 if (this.timePicker) {
                     var hour = parseInt(this.container.find('.left .hourselect').val(), 10);
@@ -1342,10 +1354,10 @@
                 this.setEndDate(date.clone());
 
                 this.element.trigger('selectedEndDate.daterangepicker', this);
-                
+
                 if (this.autoApply) {
-                  this.calculateChosenLabel();
-                  this.clickApply();
+                    this.calculateChosenLabel();
+                    this.clickApply();
                 }
             }
 
@@ -1366,7 +1378,7 @@
             var customRange = true;
             var i = 0;
             for (var range in this.ranges) {
-              if (this.timePicker) {
+                if (this.timePicker) {
                     var format = this.timePickerSeconds ? "YYYY-MM-DD HH:mm:ss" : "YYYY-MM-DD HH:mm";
                     //ignore times when comparing dates if time picker seconds is not enabled
                     if (this.startDate.format(format) == this.ranges[range][0].format(format) && this.endDate.format(format) == this.ranges[range][1].format(format)) {
@@ -1523,7 +1535,14 @@
                 start = null,
                 end = null;
 
-            if (dateString.length === 2) {
+            if (this.singleMonthView) {
+
+                var dates = this.startDate.val().split(this.locale.separator);
+                start = moment(dates[0], this.locale.format);
+                end = moment(dates[1], this.locale.format);
+
+            } else if (dateString.length === 2) {
+
                 start = moment(dateString[0], this.locale.format);
                 end = moment(dateString[1], this.locale.format);
             }
