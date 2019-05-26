@@ -57,6 +57,7 @@
         this.alwaysShowCalendars = false;
         this.additionalClasses = '';
         this.ranges = {};
+        this.displayWeekDays = true;
 
         this.opens = 'right';
         if (this.element.hasClass('pull-right'))
@@ -282,6 +283,9 @@
 
         if (typeof options.alwaysShowCalendars === 'boolean')
             this.alwaysShowCalendars = options.alwaysShowCalendars;
+
+        if (typeof options.displayWeekDays === 'boolean')
+            this.displayWeekDays = options.displayWeekDays;
 
         // update day names order to firstDay
         if (this.locale.firstDay != 0) {
@@ -705,6 +709,7 @@
             var arrow = this.locale.direction == 'ltr' ? {left: 'chevron-left', right: 'chevron-right'} : {left: 'chevron-right', right: 'chevron-left'};
 
             var html = '<table class="table-condensed">';
+
             html += '<thead>';
             html += '<tr>';
 
@@ -761,15 +766,20 @@
             }
 
             html += '</tr>';
-            html += '<tr>';
+            
+            if ( this.displayWeekDays ) {
+                html += '<tr>';
+    
+                // add week number label
+                if (this.showWeekNumbers || this.showISOWeekNumbers)
+                    html += '<th class="week">' + this.locale.weekLabel + '</th>';
 
-            // add week number label
-            if (this.showWeekNumbers || this.showISOWeekNumbers)
-                html += '<th class="week">' + this.locale.weekLabel + '</th>';
+            
+                $.each(this.locale.daysOfWeek, function(index, dayOfWeek) {
+                    html += '<th>' + dayOfWeek + '</th>';
+                });
+            }
 
-            $.each(this.locale.daysOfWeek, function(index, dayOfWeek) {
-                html += '<th>' + dayOfWeek + '</th>';
-            });
 
             html += '</tr>';
             html += '</thead>';
